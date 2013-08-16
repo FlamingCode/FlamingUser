@@ -1,0 +1,128 @@
+<?php
+
+/*
+ * Copyright (c) 2013, Flaming Code
+ * 
+ */
+
+namespace FlamingUser\Service;
+
+use Zend\Permissions\Acl\AclInterface;
+use Zend\Authentication\AuthenticationService;
+use Zend\Mvc\MvcEvent;
+
+/**
+ * AuthorizationService
+ *
+ * @author Flemming Andersen <flemming@flamingcode.com>
+ * @copyright (c) 2013, Flaming Code
+ */
+class AuthorizationService
+{
+	/**
+	 *
+	 * @var AclInterface
+	 */
+	protected $acl;
+
+	/**
+	 *
+	 * @var AuthenticationService
+	 */
+	protected $authService;
+
+	/**
+	 *
+	 * @var string
+	 */
+	protected $redirectRoute = 'home';
+
+	public function getRole()
+	{
+		if ($this->getAuthService()->hasIdentity())
+			return $this->getAuthService()->getIdentity()->getRole();
+
+		return 'guest';
+	}
+
+	/**
+	 *
+	 * @return AuthenticationService
+	 */
+	public function getAuthService()
+	{
+		return $this->authService;
+	}
+
+	/**
+	 *
+	 * @param AuthenticationService $authService
+	 * @return AuthorizationService
+	 */
+	public function setAuthService(AuthenticationService $authService)
+	{
+		$this->authService = $authService;
+		return $this;
+	}
+
+	/**
+	 *
+	 * @return AclInterface
+	 */
+	public function getAcl()
+	{
+		return $this->acl;
+	}
+
+	/**
+	 *
+	 * @param AclInterface $acl
+	 * @return AuthorizationService
+	 */
+	public function setAcl(AclInterface $acl)
+	{
+		$this->acl = $acl;
+		return $this;
+	}
+
+	public function onPreDispatch(MvcEvent $event)
+	{
+		$routeMatch = $event->getRouteMatch();
+		$route = $routeMatch->getMatchedRouteName();
+		$actionName = $routeMatch->getParam('action', 'index');
+
+		if (!$this->getAcl()->hasResource($route)) {
+			throw new \Exception(sprintf('The requested resource is not in the ACL! Resource: %s, Priviledge: %s',
+			                             $route, $actionName));
+		}
+
+		
+
+		if (!$this->getAcl()->isAllowed($this->getRole(), $route, $actionName)) {
+			$event->stopPropagation();
+
+			$url = $event->getRouter()->assemble(array(), array('name' => $this->getRedirectRoute()));
+			$response = $event->getResponse();
+			$response->getHeaders()->addHeaderLine('Location', $url);
+			$response->setStatusCode(302);
+			$response->sendHeaders();
+
+//			$response = $event->getResponse();
+//			$response->setStatusCode(404);
+//			$response->getHeaders()->addHeaderLine('Content-Type', 'text/plain');
+//			$response->setContent('Access Denied!');
+//			$response->send();
+		}
+	}
+
+	public function getRedirectRoute()
+	{
+		return $this->redirectRoute;
+	}
+
+	public function setRedirectRoute($route)
+	{
+		$this->redirectRoute = (string) $route;
+		return $this;
+	}
+}

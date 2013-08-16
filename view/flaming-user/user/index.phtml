@@ -1,0 +1,45 @@
+<?php
+$title = 'Users';
+$this->headTitle($title);
+?>
+
+<h1><?= $this->escapeHtml($title); ?></h1>
+
+<table class="table table-rounded">
+	<thead>
+		<tr>
+			<th>Status</th>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Role</th>
+			<th>Menu</th>
+		</tr>
+	</thead>
+	<tbody>
+	<? foreach ($users as $user): ?>
+		<tr class="<?= $user->active ? '' : 'inactive' ?>">
+			<td><?= $user->active ? '<i title="Active" class="icon-ok-circle"></i>' : '<i title="Inactive" class="icon-remove-circle"></i>' ?></td>
+			<td><?= $this->escapeHtml($user->fullName); ?></td>
+			<td><?= $this->escapeHtml($user->email); ?></td>
+			<td><?= $this->escapeHtml($this->translate($user->role)); ?></td>
+			<td>
+				<a href="<?= $this->url('flaminguser/user', array('action' => 'edit', 'id' => $user->id)); ?>" title="Edit"><i class="icon-edit"></i></a>
+
+				<a data-target="#deleteDialog" data-toggle="modal"
+				   href="<?= $this->url('flaminguser/user', array('action' => 'delete',
+				                                      'id' => $user->id)); ?>" title="Delete">
+					<i class="icon-trash"></i>
+				</a>
+			</td>
+		</tr>
+	<? endforeach; ?>
+	</tbody>
+</table>
+
+<div id="deleteDialog" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-header pull-right">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		&nbsp;
+	</div>
+	<div class="modal-body"></div>
+</div>

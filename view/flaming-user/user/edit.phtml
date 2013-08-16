@@ -1,0 +1,31 @@
+<?php
+$title = 'Edit User';
+$this->headTitle($title);
+?>
+
+<h1><?= $this->escapeHtml($title); ?></h1>
+
+<?php
+/* @var $form \FlamingUser\Form\UserForm */
+$form->setAttribute('action', $this->url(
+	'flaminguser/user', array(
+		'action' => 'edit',
+		'id' => $this->id,
+	)
+));
+$form->get('password')->setAttribute('placeholder', 'New password')
+                      ->setOptions(array(
+	'label' => 'New password',
+	'label_attributes' => array(
+	),
+	'bootstrap' => array(
+		'help' => array(
+			'style' => 'block',
+			'content' => 'Fill out to choose a new password'
+		)
+	)
+));
+$form->get('passwordVerify')->setOptions(array('label_attributes' => array()));
+$form->prepare();
+
+echo $this->partial('flaming-user/user/user-form', array('form' => $form));

@@ -1,0 +1,25 @@
+<?php
+
+/*
+ * Copyright (c) 2013, Flaming Code
+ * All rights reserved.
+ */
+
+return array(
+	'acl' => array(
+		'roles' => array(
+			//'some-role' => 'user',
+		),
+		'resources' => array(
+			'allow' => array(
+				'home' => array(
+					'index' => 'guest',
+					//'*' => 'guest'
+				),
+			),
+			'deny' => array(
+
+			)
+		)
+	)
+);

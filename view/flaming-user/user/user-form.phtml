@@ -1,0 +1,45 @@
+<?php
+echo $this->form()->openTag($form);
+
+echo $this->formHidden($form->get('id'));
+?>
+
+<fieldset class="span5">
+	<legend>Login information</legend>
+
+<?php
+echo $this->formRow($form->get('email'));
+
+echo $this->formRow($form->get('password'));
+
+echo $this->formRow($form->get('passwordVerify'));
+
+echo $this->formRow($form->get('role'));
+
+echo $this->formRow($form->get('active'));
+?>
+</fieldset>
+
+<fieldset class="span5">
+	<legend>Personal information</legend>
+
+<?php
+echo $this->formRow($form->get('firstname'));
+echo $this->formRow($form->get('surname'));
+?>
+</fieldset>
+
+<?php
+echo $this->formHidden($form->get('csrf'));
+
+?>
+
+<div class="clearfix"></div>
+
+<div class="form-actions">
+	<?= $this->formSubmit($form->get('submit')); ?>
+</div>
+
+<?php
+
+echo $this->form()->closeTag();

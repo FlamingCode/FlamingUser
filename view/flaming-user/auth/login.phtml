@@ -1,0 +1,34 @@
+<?php
+$title = 'Login';
+$this->headTitle($title);
+?>
+
+<h1><?= $this->escapeHtml($title); ?></h1>
+
+<?php
+/* @var $form Zend\Form\FormInterface */
+$form = $this->form;
+$form->setAttribute('action', $this->url('flaminguser/login'));
+$form->prepare();
+
+echo $this->form()->openTag($form);
+
+echo $this->formRow($form->get('email'));
+
+echo $this->formRow($form->get('password'));
+
+echo $this->formRow($form->get('remember_me'));
+?>
+
+<p class="controls">
+	Did you <a href="<?= $this->url('flaminguser/forgot-password'); ?>">forget your password?</a>
+</p>
+
+<?= $this->formHidden($form->get('csrf')); ?>
+
+<div class="form-actions">
+	<?= $this->formSubmit($form->get('submit')); ?>
+</div>
+
+<?php
+echo $this->form()->closeTag();

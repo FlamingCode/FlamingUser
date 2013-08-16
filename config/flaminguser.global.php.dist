@@ -1,0 +1,19 @@
+<?php
+
+return array(
+	'flaminguser' => array(
+		'authorization' => array(
+			'redirect_route' => 'home'
+		),
+
+		'authentication' => array(
+			'success_route' => 'home',
+			'failure_route' => 'flaminguser/login',
+			'logout_route' => 'home',
+			'failed_login_message' => 'Wrong email or password. Please try again.'
+		),
+		
+		// Use session db by default
+		'use_session_db' => true,
+	)
+);

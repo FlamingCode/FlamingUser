@@ -1,0 +1,13 @@
+<?php
+$title = 'Add User';
+$this->headTitle($title);
+?>
+
+<h1><?= $this->escapeHtml($title); ?></h1>
+
+<?php
+/* @var $form \FlamingUser\Form\UserForm */
+$form->setAttribute('action', $this->url('flaminguser/user', array('action' => 'add')));
+$form->prepare();
+
+echo $this->partial('flaming-user/user/user-form', array('form' => $form));
