@@ -64,7 +64,7 @@ class UserController extends AbstractCliController
 		if (!$filter->isValid()) {
 			$errors = array();
 			foreach ($filter->getMessages() as $input => $msg) {
-				$errors = $input . ': ' .PHP_EOL;
+				$error = $input . ': ' .PHP_EOL;
 				foreach ($msg as $m)
 					$error .= $m . PHP_EOL;
 				$errors[] = $error;
