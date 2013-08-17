@@ -172,13 +172,15 @@ EOF;
 			return $this->redirect()->toRoute('home');
 
 		$request = $this->getRequest();
-		$form = $this->getChangePasswordForm();
 
 		$params = $request->getQuery();
 		if (null === $params['id'] ||
 		    !($user = $this->getUserService()->findUserByForgotPassHash($params['id']))) {
 			return $this->createHttpNotFoundModel($this->getResponse());
 		}
+		
+		$form = $this->getChangePasswordForm();
+		$form->bind($user);
 
 		$prg = $this->prg($this->url()->fromRoute('flaminguser/change-password', array(), array(
 			'query' => array(
@@ -203,10 +205,9 @@ EOF;
 			);
 		}
 
-		$data = $form->getData();
-
 		$user->setForgotPassHash(null);
-		$this->getUserService()->updateUser($user, $data);
+		
+		$this->getUserService()->updateUser($user);
 
 		$this->flashMessenger()->addInfoMessage('You can now login using your new password');
 

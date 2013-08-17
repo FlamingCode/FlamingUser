@@ -7,9 +7,8 @@
 
 namespace FlamingUser\Service;
 
-use FlamingUser\Entity\User as UserEntity;
 use FlamingUser\Entity\UserInterface;
-use FlamingBase\Stdlib\StringTool;
+use FlamingUser\Filter\Bcrypt as BcryptFilter;
 use FlamingBase\Service\AbstractService;
 
 use Zend\Crypt\Password\Bcrypt;
@@ -25,8 +24,6 @@ use Zend\Session\Container as SessionContainer;
  */
 class UserService extends AbstractService
 {
-	const DEFAULT_PASS_COST = 14;
-
 	/**
 	 *
 	 * @var AuthenticationService
@@ -76,42 +73,33 @@ class UserService extends AbstractService
 		                                ->findAll($isAdmin);
 	}
 
-	public function createUser(array $data)
+	public function createUser($user)
 	{
-		if (array_key_exists('passwordVerify', $data))
-			unset($data['passwordVerify']);
+		if (is_array($user)) {
+			$class = $this->getOption('user_entity');
+			$user = $this->getHydrator()->hydrate($user, new $class);
+		}
 
-		$data['password'] = self::hashPassword((string) $data['password']);
-
-		$user = $this->getHydrator()->hydrate($data, new UserEntity);
-
-		// Save the record
 		$this->getEntityManager()->persist($user);
 		$this->getEntityManager()->flush();
 
 		return $user;
 	}
 
-	public function updateUser(UserEntity $user, array $data = array())
+	public function updateUser($user)
 	{
-		if (array_key_exists('passwordVerify', $data))
-			unset($data['passwordVerify']);
-
-		if (array_key_exists('password', $data) && $data['password'])
-			$data['password'] = self::hashPassword((string) $data['password']);
-		else if (array_key_exists('password', $data))
-			unset($data['password']);
-
-		$user = $this->getHydrator()->hydrate($data, $user);
-
-		// Save the record
+		if (is_array($user)) {
+			$class = $this->getOption('user_entity');
+			$user = $this->getHydrator()->hydrate($user, new $class);
+		}
+		
 		$this->getEntityManager()->persist($user);
 		$this->getEntityManager()->flush();
 
 		return $user;
 	}
 
-	public function deleteUser(UserEntity $user)
+	public function deleteUser(UserInterface $user)
 	{
 		$this->getEntityManager()->remove($user);
 		$this->getEntityManager()->flush();
@@ -202,17 +190,10 @@ class UserService extends AbstractService
 		return hash('sha256', $str);
 	}
 
-	public static function hashPassword($str)
-	{
-		$bcrypt = new Bcrypt;
-		$bcrypt->setCost(self::DEFAULT_PASS_COST);
-		return $bcrypt->create($str);
-	}
-
 	public static function checkPassword($passwordHashed, $passwordGiven)
 	{
 		$bcrypt = new Bcrypt;
-		$bcrypt->setCost(self::DEFAULT_PASS_COST);
+		$bcrypt->setCost(BcryptFilter::DEFAULT_PASS_COST);
 		return $bcrypt->verify($passwordGiven, $passwordHashed);
 	}
 

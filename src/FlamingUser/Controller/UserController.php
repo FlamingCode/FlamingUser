@@ -12,9 +12,9 @@ use Zend\View\Model\ViewModel;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\Form\FormInterface;
 
-use FlamingUser\Entity\User;
+use FlamingUser\Entity\UserInterface;
 use FlamingUser\Service\UserService;
-use FlamingUser\Filter\UserFilter;
+use FlamingUser\InputFilter\UserFilter;
 
 /**
  * UserController
@@ -38,9 +38,9 @@ class UserController extends AbstractActionController
 
 	public function indexAction()
 	{
-		/* @var $loggedInUser User */
+		/* @var $loggedInUser UserInterface */
 		$loggedInUser = $this->authentication()->getIdentity();
-		$isAdmin = User::ROLE_ADMIN === $loggedInUser->getRole();
+		$isAdmin = UserInterface::ROLE_ADMIN === $loggedInUser->getRole();
 
 		return new ViewModel(array(
 			'users' => $this->getUserService()->findUsers($isAdmin),
@@ -50,9 +50,9 @@ class UserController extends AbstractActionController
 
 	public function addAction()
 	{
-		/* @var $loggedInUser User */
+		/* @var $loggedInUser UserInterface */
 		$loggedInUser = $this->authentication()->getIdentity();
-		$isAdmin = User::ROLE_ADMIN === $loggedInUser->getRole();
+		$isAdmin = UserInterface::ROLE_ADMIN === $loggedInUser->getRole();
 
 		$form = $this->getUserForm();
 		$form->setAdminMode($isAdmin);
@@ -88,9 +88,9 @@ class UserController extends AbstractActionController
 
 	public function editAction()
 	{
-		/* @var $loggedInUser User */
+		/* @var $loggedInUser UserInterface */
 		$loggedInUser = $this->authentication()->getIdentity();
-		$isAdmin = User::ROLE_ADMIN === $loggedInUser->getRole();
+		$isAdmin = UserInterface::ROLE_ADMIN === $loggedInUser->getRole();
 
 		$id = (int) $this->params()->fromRoute('id', 0);
 		if (!$id) {
@@ -104,6 +104,8 @@ class UserController extends AbstractActionController
 
 		$form = $this->getUserForm();
 		$form->setAdminMode($isAdmin);
+		$form->getInputFilter()->setMode(UserFilter::FILTER_MODE_EDIT);
+		$form->bind($user);
 
 		$prg = $this->prg($this->url()->fromRoute('flaminguser/user', array(
 			'action' => 'edit',
@@ -113,9 +115,6 @@ class UserController extends AbstractActionController
 		if ($prg instanceof Response) {
 			return $prg;
 		} elseif ($prg === false) {
-			$data = $this->getUserService()->getHydrator()->extract($user);
-			$form->setData($data);
-
 			return array(
 				'id' => $id,
 				'form' => $form,
@@ -123,9 +122,6 @@ class UserController extends AbstractActionController
 			);
 		}
 
-		$filter = new UserFilter($this->getUserService()->getEntityManager(),
-		                         UserFilter::FILTER_MODE_EDIT);
-		$form->setInputFilter($filter);
 		$form->setData($prg);
 
 		if (!$form->isValid()) {
@@ -135,8 +131,8 @@ class UserController extends AbstractActionController
 				'isAdmin' => $isAdmin
 			);
 		}
-
-		if ($this->getUserService()->updateUser($user, $form->getData())) {
+		
+		if ($this->getUserService()->updateUser($user)) {
 			$this->flashMessenger()->addSuccessMessage('User updated');
 
 			return $this->redirect()->toRoute('flaminguser/user');
@@ -145,9 +141,9 @@ class UserController extends AbstractActionController
 
 	public function deleteAction()
 	{
-		/* @var $loggedInUser User */
+		/* @var $loggedInUser UserInterface */
 		$loggedInUser = $this->authentication()->getIdentity();
-		$isAdmin = User::ROLE_ADMIN === $loggedInUser->getRole();
+		$isAdmin = UserInterface::ROLE_ADMIN === $loggedInUser->getRole();
 
 		$id = (int) $this->params()->fromRoute('id', 0);
 		if (!$id) {

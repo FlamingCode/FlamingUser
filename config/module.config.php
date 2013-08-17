@@ -104,8 +104,13 @@ return array(
 	),
 
 	'flaminguser' => array(
+		'user_service' => array(
+			'user_entity' => 'FlamingUser\Entity\User'
+		),
+		
 		'authorization' => array(
-			'redirect_route' => 'home'
+			'redirect_route' => 'home',
+			'login_route' => 'flaminguser/login'
 		),
 
 		'authentication' => array(

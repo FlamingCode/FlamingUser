@@ -5,7 +5,9 @@
  * 
  */
 
-namespace FlamingUser\Filter;
+namespace FlamingUser\InputFilter;
+
+use FlamingBase\InputFilter\Factory as InputFactory;
 
 use Zend\InputFilter\InputFilter;
 
@@ -19,11 +21,14 @@ class ChangePasswordFilter extends InputFilter
 {
 	public function __construct()
 	{
+		$this->setFactory(new InputFactory);
+		
 		$this->add(array(
 			'name' => 'password',
+			'type' => 'FlamingBase\InputFilter\PostValidationFilterableInput',
 			'required' => true,
 			'filters' => array(
-
+				
 			),
 			'validators' => array(
 				array(
@@ -33,7 +38,16 @@ class ChangePasswordFilter extends InputFilter
 						'min' => 6,
 					),
 				),
+				array(
+					'name' => 'identical',
+					'options' => array(
+						'token' => 'passwordVerify'
+					)
+				),
 			),
+			'post_validation_filters' => array(
+				array('name' => 'FlamingBase\Filter\Bcrypt')
+			)
 		));
 
 		$this->add(array(

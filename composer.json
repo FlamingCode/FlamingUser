@@ -20,19 +20,28 @@
 	"minimum-stability": "dev",
 	"require": {
 		"php": ">=5.3.3",
-		"zendframework/zend-loader": "~2.1",
-		"zendframework/zend-modulemanager": "~2.1",
-		"zendframework/zend-mvc": "~2.1",
-		"zendframework/zend-servicemanager": "~2.1",
+		"zendframework/zend-loader": "2.*",
+		"zendframework/zend-modulemanager": "2.*",
+		"zendframework/zend-mvc": "2.*",
+		"zendframework/zend-servicemanager": "2.*",
+		"zendframework/zend-authentication": "2.*",
+		"zendframework/zend-console": "2.*",
+		"zendframework/zend-inputfilter": "2.*",
+		"zendframework/zend-form": "2.*",
+		"zendframework/zend-validator": "2.*",
+		"zendframework/zend-view": "2.*",
+		"zendframework/zend-session": "2.*",
+		"zendframework/zend-permissions-acl": "2.*",
 		"doctrine/doctrine-module": "0.*",
-		"doctrine/doctrine-orm-module": "0.*"
+		"doctrine/doctrine-orm-module": "0.*",
+		"flaming-code/flaming-base": "dev-master"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "~3.7",
-		"zendframework/zendframework": "~2.1"
+		"zendframework/zendframework": "2.*"
 	},
 	"suggest": {
-		
+		"zendframework/zend-db": "If you want to save sessions to a database"
 	},
 	"autoload": {
 		"psr-0": {

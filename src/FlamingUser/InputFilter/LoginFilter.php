@@ -5,17 +5,17 @@
  * 
  */
 
-namespace FlamingUser\Filter;
+namespace FlamingUser\InputFilter;
 
 use Zend\InputFilter\InputFilter;
 
 /**
- * ForgotPasswordFilter
+ * LoginFilter
  *
  * @author Flemming Andersen <flemming@flamingcode.com>
  * @copyright (c) 2013, Flaming Code
  */
-class ForgotPasswordFilter extends InputFilter
+class LoginFilter extends InputFilter
 {
 	public function __construct()
 	{
@@ -29,6 +29,23 @@ class ForgotPasswordFilter extends InputFilter
 			'validators' => array(
 				array(
 					'name' => 'EmailAddress',
+				),
+			),
+		));
+
+		$this->add(array(
+			'name' => 'password',
+			'required' => true,
+			'filters' => array(
+
+			),
+			'validators' => array(
+				array(
+					'name' => 'StringLength',
+					'options' => array(
+						'encoding' => 'UTF-8',
+						'min' => 6,
+					),
 				),
 			),
 		));

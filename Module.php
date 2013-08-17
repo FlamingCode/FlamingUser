@@ -35,42 +35,54 @@ class Module
 				 */
 				'FlamingUser\Form\LoginForm' => function($sm) {
 					$form = new Form\LoginForm;
-					$form->setInputFilter(new Filter\LoginFilter);
+					$form->setInputFilter(new InputFilter\LoginFilter);
 					return $form;
 				},
 				'FlamingUser\Form\ForgotPasswordForm' => function($sm) {
 					$form = new Form\ForgotPasswordForm;
-					$form->setInputFilter(new Filter\ForgotPasswordFilter);
+					$form->setInputFilter(new InputFilter\ForgotPasswordFilter);
 					return $form;
 				},
 				'FlamingUser\Form\ChangePasswordForm' => function($sm) {
+					$config = $sm->get('Configuration');
 					$form = new Form\ChangePasswordForm;
-					$form->setInputFilter(new Filter\ChangePasswordFilter);
+					$form->setObject(new $config['flaminguser']['user_service']['user_entity'])
+					     ->setHydrator($sm->get('FlamingUser\Hydrator\UserHydrator'))
+					     ->setInputFilter(new InputFilter\ChangePasswordFilter);
 					return $form;
 				},
 				'FlamingUser\Form\UserForm' => function($sm) {
+					$config = $sm->get('Configuration');
 					$entityMgr = $sm->get('Doctrine\ORM\EntityManager');
 					$form = new Form\UserForm;
-					$form->setInputFilter(new Filter\UserFilter($entityMgr));
+					$form->setObject(new $config['flaminguser']['user_service']['user_entity'])
+					     ->setHydrator($sm->get('FlamingUser\Hydrator\UserHydrator'))
+					     ->setInputFilter(new InputFilter\UserFilter($entityMgr, $config['flaminguser']['user_service']['user_entity']));
 					return $form;
 				},
 				'FlamingUser\Form\ProfileForm' => function($sm) {
+					$config = $sm->get('Configuration');
 					$entityMgr = $sm->get('Doctrine\ORM\EntityManager');
 					$form = new Form\ProfileForm;
-					$form->setInputFilter(new Filter\ProfileFilter($entityMgr));
+					$form->setObject(new $config['flaminguser']['user_service']['user_entity'])
+					     ->setHydrator($sm->get('FlamingUser\Hydrator\UserHydrator'))
+					     ->setInputFilter(new InputFilter\ProfileFilter($entityMgr, $config['flaminguser']['user_service']['user_entity']));
 					return $form;
 				},
 
 				'FlamingUser\Service\UserService' => function($sm) {
+					$config = $sm->get('Configuration');
 					$service = new Service\UserService;
 					$service->setEntityManager($sm->get('Doctrine\ORM\EntityManager'))
 					        ->setAuthService($sm->get('flaminguser_auth_service'))
-					        ->setHydrator($sm->get('FlamingUser\Hydrator\UserHydrator'));
+					        ->setHydrator($sm->get('FlamingUser\Hydrator\UserHydrator'))
+					        ->setOptions($config['flaminguser']['user_service']);
 					return $service;
 				},
 
 				'FlamingUser\Hydrator\UserHydrator' => function($sm) {
-					$hydrator = new DoctrineHydrator($sm->get('Doctrine\ORM\EntityManager'), 'FlamingUser\Entity\User');
+					$config = $sm->get('Configuration');
+					$hydrator = new DoctrineHydrator($sm->get('Doctrine\ORM\EntityManager'), $config['flaminguser']['user_service']['user_entity']);
 					return $hydrator;
 				},
 
@@ -85,7 +97,8 @@ class Module
 					$service = new Service\AuthorizationService;
 					$service->setAuthService($sm->get('flaminguser_auth_service'))
 					        ->setAcl($sm->get('FlamingUser\Permissions\Acl\Acl'))
-					        ->setRedirectRoute($config['flaminguser']['authorization']['redirect_route']);
+					        ->setRedirectRoute($config['flaminguser']['authorization']['redirect_route'])
+					        ->setLoginRoute($config['flaminguser']['authorization']['login_route']);
 					return $service;
 				},
 

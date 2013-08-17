@@ -103,7 +103,8 @@ class User extends AbstractEntity implements UserInterface
 
 	public function setPassword($password)
 	{
-		$this->password = $password;
+		if (!empty($password))
+			$this->password = (string) $password;
 		return $this;
 	}
 

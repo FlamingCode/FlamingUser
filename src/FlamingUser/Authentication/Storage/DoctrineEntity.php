@@ -8,6 +8,7 @@
 namespace FlamingUser\Authentication\Storage;
 
 use Zend\Authentication\Storage\Session as ZendSessionStorage;
+use Zend\Session\ManagerInterface as SessionManagerInterface;
 
 use Doctrine\ORM\EntityManager;
 
@@ -25,7 +26,7 @@ class DoctrineEntity extends ZendSessionStorage
 	 */
 	protected $entityManager;
 
-	public function __construct(EntityManager $entityManager = null, $namespace = null, $member = null, \Zend\Session\ManagerInterface $manager = null)
+	public function __construct(EntityManager $entityManager = null, $namespace = null, $member = null, SessionManagerInterface $manager = null)
 	{
 		if (null !== $entityManager)
 			$this->setEntityManager($entityManager);

@@ -5,9 +5,12 @@
  * 
  */
 
-namespace FlamingUser\Filter;
+namespace FlamingUser\InputFilter;
+
+use FlamingBase\InputFilter\Factory as InputFactory;
 
 use Zend\InputFilter\InputFilter;
+
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -26,8 +29,10 @@ class UserFilter extends InputFilter
 	 * @param EntityManager $em
 	 * @param string $mode Add or edit mode
 	 */
-	public function __construct(EntityManager $em, $mode = self::FILTER_MODE_ADD)
+	public function __construct(EntityManager $em, $userEntityClass, $mode = self::FILTER_MODE_ADD)
 	{
+		$this->setFactory(new InputFactory);
+		
 		$this->add(array(
 			'name' => 'id',
 			'required' => true,
@@ -115,7 +120,7 @@ class UserFilter extends InputFilter
 					'name' => 'DoctrineModule\Validator\UniqueObject',
 					'options' => array(
 						'object_manager' => $em,
-						'object_repository' => $em->getRepository('FlamingUser\Entity\User'),
+						'object_repository' => $em->getRepository($userEntityClass),
 						'fields' => array('email'),
 						'messages' => array(
 							'objectNotUnique' => 'The email is already in use'
@@ -129,6 +134,7 @@ class UserFilter extends InputFilter
 
 		$this->add(array(
 			'name' => 'password',
+			'type' => 'FlamingBase\InputFilter\PostValidationFilterableInput',
 			'required' => $passwordRequired,
 			'filters' => array(
 
@@ -148,6 +154,9 @@ class UserFilter extends InputFilter
 					)
 				),
 			),
+			'post_validation_filters' => array(
+				array('name' => 'FlamingBase\Filter\Bcrypt'),
+			)
 		));
 
 		$this->add(array(
@@ -172,5 +181,16 @@ class UserFilter extends InputFilter
 				),
 			),
 		));
+	}
+	
+	public function setMode($mode)
+	{
+		if ($mode === self::FILTER_MODE_ADD) {
+			$this->get('password')->setRequired(true);
+			$this->get('passwordVerify')->setRequired(true);
+		} else {
+			$this->get('password')->setRequired(false);
+			$this->get('passwordVerify')->setRequired(false);
+		}
 	}
 }

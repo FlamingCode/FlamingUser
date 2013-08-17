@@ -36,6 +36,8 @@ class AuthorizationService
 	 * @var string
 	 */
 	protected $redirectRoute = 'home';
+	
+	protected $loginRoute = 'flaminguser/login';
 
 	public function getRole()
 	{
@@ -96,22 +98,18 @@ class AuthorizationService
 			                             $route, $actionName));
 		}
 
-		
-
 		if (!$this->getAcl()->isAllowed($this->getRole(), $route, $actionName)) {
 			$event->stopPropagation();
 
 			$url = $event->getRouter()->assemble(array(), array('name' => $this->getRedirectRoute()));
+			if ('guest' === $this->getRole()) {
+				$url = $event->getRouter()->assemble(array(), array('name' => $this->getLoginRoute()));
+			}
+			
 			$response = $event->getResponse();
 			$response->getHeaders()->addHeaderLine('Location', $url);
 			$response->setStatusCode(302);
 			$response->sendHeaders();
-
-//			$response = $event->getResponse();
-//			$response->setStatusCode(404);
-//			$response->getHeaders()->addHeaderLine('Content-Type', 'text/plain');
-//			$response->setContent('Access Denied!');
-//			$response->send();
 		}
 	}
 
@@ -123,6 +121,17 @@ class AuthorizationService
 	public function setRedirectRoute($route)
 	{
 		$this->redirectRoute = (string) $route;
+		return $this;
+	}
+	
+	public function getLoginRoute()
+	{
+		return $this->loginRoute;
+	}
+
+	public function setLoginRoute($route)
+	{
+		$this->loginRoute = (string) $route;
 		return $this;
 	}
 }

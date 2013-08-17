@@ -7,7 +7,10 @@
 
 namespace FlamingUser\Filter;
 
+use FlamingBase\InputFilter\Factory as InputFactory;
+
 use Zend\InputFilter\InputFilter;
+
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -18,8 +21,10 @@ use Doctrine\ORM\EntityManager;
  */
 class ProfileFilter extends InputFilter
 {
-	public function __construct(EntityManager $em)
+	public function __construct(EntityManager $em, $userEntityClass)
 	{
+		$this->setFactory(new InputFactory);
+		
 		$this->add(array(
 			'name' => 'id',
 			'required' => true,
@@ -107,7 +112,7 @@ class ProfileFilter extends InputFilter
 					'name' => 'DoctrineModule\Validator\UniqueObject',
 					'options' => array(
 						'object_manager' => $em,
-						'object_repository' => $em->getRepository('Tasti\Entity\User'),
+						'object_repository' => $em->getRepository($userEntityClass),
 						'fields' => array('email'),
 						'messages' => array(
 							'objectNotUnique' => 'Der findes allerede en bruger i systemet med denne emailadresse'
@@ -119,6 +124,7 @@ class ProfileFilter extends InputFilter
 
 		$this->add(array(
 			'name' => 'password',
+			'type' => 'FlamingBase\InputFilter\PostValidationFilterableInput',
 			'required' => false,
 			'filters' => array(
 
@@ -131,7 +137,16 @@ class ProfileFilter extends InputFilter
 						'min' => 6,
 					),
 				),
+				array(
+					'name' => 'identical',
+					'options' => array(
+						'token' => 'passwordVerify'
+					)
+				),
 			),
+			'post_validation_filters' => array(
+				array('name' => 'FlamingBase\Filter\Bcrypt')
+			)
 		));
 
 		$this->add(array(
