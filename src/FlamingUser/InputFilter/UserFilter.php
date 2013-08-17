@@ -37,7 +37,7 @@ class UserFilter extends InputFilter
 		
 		$this->add(array(
 			'name' => 'id',
-			'required' => true,
+			'required' => false,
 			'filters' => array(
 				array('name' => 'Int'),
 			),
