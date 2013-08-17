@@ -8,7 +8,7 @@
 namespace FlamingUser\Service;
 
 use FlamingUser\Entity\UserInterface;
-use FlamingUser\Filter\Bcrypt as BcryptFilter;
+use FlamingBase\Filter\Bcrypt as BcryptFilter;
 use FlamingBase\Service\AbstractService;
 
 use Zend\Crypt\Password\Bcrypt;

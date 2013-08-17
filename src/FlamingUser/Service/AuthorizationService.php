@@ -105,7 +105,20 @@ class AuthorizationService
 
 			$url = $event->getRouter()->assemble(array(), array('name' => $this->getRedirectRoute()));
 			if ('guest' === $this->getRole()) {
-				$url = $event->getRouter()->assemble(array(), array('name' => $this->getLoginRoute()));
+				$query = array(
+					'r' => urlencode($event->getRouter()->assemble(array(
+						'action' => $actionName
+					), array(
+						'name' => $route
+					)))
+				);
+				$url = $event->getRouter()->assemble(
+					array(), 
+					array(
+						'name' => $this->getLoginRoute(),
+						'query' => $query
+					)
+				);
 			}
 			
 			$response = $event->getResponse();
