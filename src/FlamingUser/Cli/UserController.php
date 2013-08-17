@@ -12,6 +12,7 @@ use FlamingBase\Controller\AbstractCliController;
 use FlamingUser\Service\UserService;
 
 use FlamingBase\Stdlib\StringTool;
+use FlamingUser\InputFilter\UserFilter;
 
 use Zend\Console\Request as ConsoleRequest;
 
@@ -28,21 +29,35 @@ class UserController extends AbstractCliController
 	 * @var UserService
 	 */
 	protected $userService;
+	
+	/**
+	 *
+	 * @var UserFilter
+	 */
+	protected $userFilter;
 
 	public function addAction()
 	{
 		$request = $this->getRequest();
 		if (!$request instanceof ConsoleRequest)
 			throw new \RuntimeException('You can only use this action from a console!');
-
-		$user = $this->getUserService()->createUser(array(
+		
+		$user = array(
 			'email' => $request->getParam('email'),
 			'password' => $request->getParam('password'),
 			'role' => $request->getParam('role', 'user'),
 			'firstname' => $request->getParam('firstname', ''),
 			'surname' => $request->getParam('surname', ''),
 			'active' => true
-		));
+		);
+		
+		$filter = $this->getUserFilter();
+		$filter->setData($user);
+		if (!$filter->isValid()) {
+			return implode(PHP_EOL, $filter->getMessages());
+		}
+
+		$user = $this->getUserService()->createUser($filter->getValues());
 
 		$output = "User created\n";
 		if (!$user->getId())
@@ -66,5 +81,16 @@ class UserController extends AbstractCliController
 		if (!$this->userService)
 			$this->userService = $this->getServiceLocator()->get('FlamingUser\Service\UserService');
 		return $this->userService;
+	}
+	
+	/**
+	 * 
+	 * @return UserFilter
+	 */
+	public function getUserFilter()
+	{
+		if (!$this->userFilter)
+			$this->userFilter = $this->getServiceLocator()->get('FlamingUser\Service\UserFilter');
+		return $this->userFilter;
 	}
 }
