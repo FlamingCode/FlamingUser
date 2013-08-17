@@ -37,7 +37,7 @@ class UserFilter extends InputFilter
 		
 		$this->add(array(
 			'name' => 'id',
-			'required' => false,
+			'required' => true,
 			'filters' => array(
 				array('name' => 'Int'),
 			),
@@ -119,7 +119,7 @@ class UserFilter extends InputFilter
 				),
 
 				array(
-					'name' => 'DoctrineModule\Validator\UniqueObject',
+					'name' => 'FlamingBase\Validator\UniqueObject',
 					'options' => array(
 						'object_manager' => $em,
 						'object_repository' => $em->getRepository($userEntityClass),

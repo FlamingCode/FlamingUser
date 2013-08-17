@@ -111,7 +111,7 @@ class ProfileFilter extends InputFilter
 				),
 
 				array(
-					'name' => 'DoctrineModule\Validator\UniqueObject',
+					'name' => 'FlamingBase\Validator\UniqueObject',
 					'options' => array(
 						'object_manager' => $em,
 						'object_repository' => $em->getRepository($userEntityClass),
