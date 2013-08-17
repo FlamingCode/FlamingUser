@@ -9,6 +9,8 @@ namespace FlamingUser;
 
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
+use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
+use Zend\Console\Adapter\AdapterInterface as Console;
 
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 
@@ -20,7 +22,7 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
  * @link http://github.com/FlamingCode/FlamingUser for the canonical source repository
  * @license http://opensource.org/licenses/GPL-2.0 GPL-2.0
  */
-class Module
+class Module implements ConsoleUsageProviderInterface
 {
 	/**
 	 *
@@ -164,6 +166,18 @@ class Module
 					return $controllerPlugin;
 				},
 			),
+		);
+	}
+	
+	public function getConsoleUsage(Console $console)
+	{
+		return array(
+			'Session Cleanup',
+			'session cleanup [-m|--send-mail]' => 'Session cleanup',
+			'session clear' => 'Delete all sessions',
+
+			'User Management',
+			'user add [-g|--generate-password] [--password=] <email> [role] [firstname] [surname]' => 'Add a user to the system. The default role is \'user\'.',
 		);
 	}
 

@@ -20,5 +20,9 @@ return array(
 		
 		// Use session db by default
 		'use_session_db' => true,
+		
+		'session_cleanup' => array(
+			'default_email_receiver' => 'my-receiver@email.invalid'
+		),
 	)
 );

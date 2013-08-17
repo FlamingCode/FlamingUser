@@ -93,13 +93,53 @@ return array(
 					),
 				),
 			),
+		),
+	),
+		
+	'console' => array(
+		'router' => array(
+			'routes' => array(
+				'session-cleanup' => array(
+					'options' => array(
+						'route' => 'session cleanup [-m|--send-mail]',
+						'defaults' => array(
+							'controller' => 'FlamingUser\Cli\Session',
+							'action' => 'cleanup'
+						)
+					)
+				),
+
+				'session-clear' => array(
+					'options' => array(
+						'route' => 'session clear',
+						'defaults' => array(
+							'controller' => 'FlamingUser\Cli\Session',
+							'action' => 'clear'
+						)
+					)
+				),
+
+				'user-add' => array(
+					'options' => array(
+						'route' => 'user add [-g|--generate-password] [--password=] <email> [<role>] [<firstname>] [<surname>]',
+						'defaults' => array(
+							'controller' => 'FlamingUser\Cli\User',
+							'action' => 'add'
+						)
+					)
+				),
+			)
 		)
 	),
 
 	'controllers' => array(
 		'invokables' => array(
 			'FlamingUser\Controller\Auth' => 'FlamingUser\Controller\AuthController',
-			'FlamingUser\Controller\User' => 'FlamingUser\Controller\UserController'
+			'FlamingUser\Controller\User' => 'FlamingUser\Controller\UserController',
+			
+			// Console controllers
+			'FlamingUser\Cli\Session' => 'FlamingUser\Cli\SessionController',
+			'FlamingUser\Cli\User' => 'FlamingUser\Cli\UserController',
 		)
 	),
 
@@ -122,6 +162,10 @@ return array(
 		
 		// Use session db by default
 		'use_session_db' => true,
+		
+		'session_cleanup' => array(
+			'default_email_receiver' => 'my-receiver@email.invalid'
+		),
 	),
 
 	'acl' => array(
