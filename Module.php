@@ -34,6 +34,12 @@ class Module implements ConsoleUsageProviderInterface
 	{
 		return array(
 			'factories' => array(
+				'FlamingUser\InputFilter\UserFilter' => function($sm) {
+					$config = $sm->get('Configuration');
+					$entityMgr = $sm->get('Doctrine\ORM\EntityManager');
+					return new InputFilter\UserFilter($entityMgr, $config['flaminguser']['user_service']['user_entity']);
+				},
+				
 				/*
 				 * Forms
 				 */
@@ -61,7 +67,7 @@ class Module implements ConsoleUsageProviderInterface
 					$form = new Form\UserForm;
 					$form->setObject(new $config['flaminguser']['user_service']['user_entity'])
 					     ->setHydrator($sm->get('FlamingUser\Hydrator\UserHydrator'))
-					     ->setInputFilter(new InputFilter\UserFilter($entityMgr, $config['flaminguser']['user_service']['user_entity']));
+					     ->setInputFilter($sm->get('FlamingUser\InputFilter\UserFilter'));
 					return $form;
 				},
 				'FlamingUser\Form\ProfileForm' => function($sm) {

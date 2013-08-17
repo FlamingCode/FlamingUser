@@ -90,7 +90,7 @@ class UserController extends AbstractCliController
 	public function getUserFilter()
 	{
 		if (!$this->userFilter)
-			$this->userFilter = $this->getServiceLocator()->get('FlamingUser\Service\UserFilter');
+			$this->userFilter = $this->getServiceLocator()->get('FlamingUser\InputFilter\UserFilter');
 		return $this->userFilter;
 	}
 }
