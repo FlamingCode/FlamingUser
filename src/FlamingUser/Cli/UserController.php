@@ -42,9 +42,15 @@ class UserController extends AbstractCliController
 		if (!$request instanceof ConsoleRequest)
 			throw new \RuntimeException('You can only use this action from a console!');
 		
+		$password = $request->getParam('password');
+		if (($request->getParam('generate-password') || $request->getParam('g')) && !$request->getParam('password')) {
+			$password = StringTool::randStr(8);
+			$output .= "With password: $password\n";
+		}
+		
 		$user = array(
 			'email' => $request->getParam('email'),
-			'password' => $request->getParam('password'),
+			'password' => $password,
 			'role' => $request->getParam('role', 'user'),
 			'firstname' => $request->getParam('firstname', ''),
 			'surname' => $request->getParam('surname', ''),
@@ -53,27 +59,23 @@ class UserController extends AbstractCliController
 		
 		$filter = $this->getUserFilter();
 		$filter->get('id')->setRequired(false);
+		$filter->get('passwordVerify')->setRequired(false);
 		$filter->setData($user);
 		if (!$filter->isValid()) {
-			var_dump($filter->getMessages()); die();
 			$errors = array();
-			foreach ($filter->getMessages() as $msg) {
-				
+			foreach ($filter->getMessages() as $input => $msg) {
+				$errors = $input . ': ' .PHP_EOL;
+				foreach ($msg as $m)
+					$error .= $m . PHP_EOL;
+				$errors[] = $error;
 			}
 			return implode(PHP_EOL, $errors);
 		}
 
 		$user = $this->getUserService()->createUser($filter->getValues());
 
-		$output = "User created\n";
 		if (!$user->getId())
 			return "Error saving user!\n";
-
-		if (($request->getParam('generate-password') || $request->getParam('g')) && !$request->getParam('password')) {
-			$password = StringTool::randStr(8);
-			$output .= "With password: $password\n";
-			$this->getUserService()->updateUser($user, array('password' => $password));
-		}
 
 		return $output;
 	}
