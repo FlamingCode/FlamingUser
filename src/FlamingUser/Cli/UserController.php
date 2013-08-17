@@ -52,6 +52,7 @@ class UserController extends AbstractCliController
 		);
 		
 		$filter = $this->getUserFilter();
+		$filter->get('id')->setRequired(false);
 		$filter->setData($user);
 		if (!$filter->isValid()) {
 			return implode(PHP_EOL, $filter->getMessages());
