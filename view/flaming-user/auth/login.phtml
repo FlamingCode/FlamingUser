@@ -8,7 +8,7 @@ $this->headTitle($title);
 <?php
 /* @var $form Zend\Form\FormInterface */
 $form = $this->form;
-$form->setAttribute('action', $this->url('flaminguser/login'));
+$form->setAttribute('action', $this->url('flaminguser/login'), array('action' => 'login'), array('query' => $query));
 $form->prepare();
 
 echo $this->form()->openTag($form);

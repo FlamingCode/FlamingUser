@@ -65,7 +65,8 @@ class AuthController extends AbstractActionController
 
 		if (!$request->isPost()) {
 			return array(
-				'form' => $form
+				'form' => $form,
+				'query' => $this->params()->fromQuery()
 			);
 		}
 
@@ -73,7 +74,7 @@ class AuthController extends AbstractActionController
 
 		if (!$form->isValid()) {
 			$this->flashMessenger()->addErrorMessage($this->getFailedLoginMessage());
-			return $this->redirect()->toRoute($this->getFailureRoute());
+			return $this->redirect()->toRoute($this->getFailureRoute(), array(), array('query' => $this->params()->fromQuery()));
 		}
 
 		return $this->authenticateAction();
@@ -85,6 +86,9 @@ class AuthController extends AbstractActionController
 	public function logoutAction()
 	{
 		$this->getUserService()->logout();
+		
+		if ($url = $this->params()->fromQuery('r', false))
+			return $this->redirect()->toUrl($url);
 
 		return $this->redirect()->toRoute($this->getLogoutRoute());
 	}
@@ -106,6 +110,9 @@ class AuthController extends AbstractActionController
 			$this->flashMessenger()->addErrorMessage($this->getFailedLoginMessage());
 			return $this->redirect()->toRoute($this->getFailureRoute());
 		}
+		
+		if ($url = $this->params()->fromQuery('r', false))
+			return $this->redirect()->toUrl($url);
 
 		return $this->redirect()->toRoute($this->getSuccessRoute());
 	}
