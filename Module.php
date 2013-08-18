@@ -24,12 +24,6 @@ use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
  */
 class Module implements ConsoleUsageProviderInterface
 {
-	/**
-	 *
-	 * @var Acl
-	 */
-	protected $acl;
-
 	public function getServiceConfig()
 	{
 		return array(
