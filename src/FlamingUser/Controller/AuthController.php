@@ -102,13 +102,13 @@ class AuthController extends AbstractActionController
 		if ($this->authentication()->hasIdentity())
 			return $this->redirect()->toRoute($this->getSuccessRoute());
 		else if (!$request->isPost())
-			return $this->redirect()->toRoute($this->getFailureRoute());
+			return $this->redirect()->toRoute($this->getFailureRoute(), array(), array('query' => $this->params()->fromQuery()));
 
 		$data = $request->getPost();
 		if (!$this->getUserService()->login($data['email'], $data['password'],
 		    (bool) $data['remember_me'])) {
 			$this->flashMessenger()->addErrorMessage($this->getFailedLoginMessage());
-			return $this->redirect()->toRoute($this->getFailureRoute());
+			return $this->redirect()->toRoute($this->getFailureRoute(), array(), array('query' => $this->params()->fromQuery()));
 		}
 		
 		if ($url = $this->params()->fromQuery('r', false))
