@@ -218,7 +218,7 @@ class Module implements ConsoleUsageProviderInterface
 	{
 		$config = $sm->get('Configuration');
 		$saveHandler = null;
-		if ($config['flaming_user']['use_session_db']) {
+		if ($config['flaminguser']['use_session_db']) {
 			$sessionTableGateway = $sm->get('flaminguser_session_tablegateway');
 			$sessionTableGWOptions = new \Zend\Session\SaveHandler\DbTableGatewayOptions;
 			$saveHandler = new \Zend\Session\SaveHandler\DbTableGateway($sessionTableGateway,
