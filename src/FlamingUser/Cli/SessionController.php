@@ -26,6 +26,8 @@ class SessionController extends AbstractCliController
 	 */
 	protected $sessionTableGateway;
 
+	protected $emailReceiver;
+
 	public function cleanupAction()
 	{
 		$request = $this->getRequest();
