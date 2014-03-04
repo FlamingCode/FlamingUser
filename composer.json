@@ -2,7 +2,7 @@
 	"name": "flaming-code/flaming-user",
 	"description": "A module for managing users and authentication. Uses Doctrine.",
 	"type": "library",
-	"license": "GPL-2.0",
+	"license": "MIT",
 	"homepage": "https://github.com/FlamingCode/FlamingUser",
 	"keywords": [
 		"flaminguser",
